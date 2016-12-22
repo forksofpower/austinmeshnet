@@ -3,7 +3,7 @@ let
     express = require('express')
   , router = express.Router()
   , async = require('async')
-  , emails = require('../controllers/emails.controller.js')
+  , contacts = require('../controllers/contacts.controller.js')
   ;
 
 
@@ -11,13 +11,13 @@ router.post('/', (req, res, next) => {
   // console.log(req)
   async.series([
     (cb) => {
-      emails.isValidEmail(req.body.email, (err) => { return cb(err) })
+      contacts.isValidEmail(req.body.email, (err) => { return cb(err) })
     },
     (cb) => {
-      emails.isUniqueEmail(req.body.email, (err) => { return cb(err) })
+      contacts.isUniqueEmail(req.body.email, (err) => { return cb(err) })
     },
     (cb) => {
-      emails.appendToMailingList(req.body.email, (err) => { return cb(err) })
+      contacts.appendToMailingList(req.body.email, (err) => { return cb(err) })
     },
   ], (err) => {
     if (err) return res.status(400).send(err)
