@@ -4,7 +4,7 @@
  * Module dependencies.
  */
 
-var app = require('bin/app');
+var app = require('./bin/app.js');
 var debug = require('debug')('austinmeshnet:server');
 var http = require('http');
 

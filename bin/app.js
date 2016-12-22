@@ -5,8 +5,8 @@ let
   , path = require('path')
   , favicon = require('serve-favicon')
   , bodyParser = require('body-parser')
-  , index = require('./routes/index')
-  , newsletter = require('./routes/newsletter')
+  , index = require('../routes/index')
+  , newsletter = require('../routes/newsletter')
   , app = express()
   ;
 
