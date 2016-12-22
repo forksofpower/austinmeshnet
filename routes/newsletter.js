@@ -17,7 +17,7 @@ router.post('/', (req, res, next) => {
       emails.isUniqueEmail(req.body.email, (err) => { return cb(err) })
     },
     (cb) => {
-      emails.appendMailingList(req.body.email, (err) => { return cb(err) })
+      emails.appendToMailingList(req.body.email, (err) => { return cb(err) })
     },
   ], (err) => {
     if (err) return res.status(400).send(err)
