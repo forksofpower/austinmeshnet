@@ -5,24 +5,27 @@ let
   , async = require('async')
   , request = require('request')
 
-const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+const checkEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 class Contact {
-  constructor(firstName, lastName, email) {
-    if (!firstName || !lastName || !email) return { message: 'All fields are required' }
-    else if (this.isValidEmail(email)) return { message: 'This email already exists'}
+  constructor(data) {
+    // if (!firstName || !lastName || !email) return { message: 'All fields are required' }
+    if (!this.isValidEmail(data.email)) return { message: 'Email is not valid'}
     else {
-      this.firstName = firstName;
-      this.lastName = lastName;
-      this.email = email;
+      this.firstName = data.firstName;
+      this.lastName = data.lastName;
+      this.email = data.email;
     }
   }
 
-  // Getters/setters
+  bark() {
+    console.log(`${this.firstName} ${this.lastName} can be reached at ${this.email}`)
+  }
 
-
-  isValidEmail(email || this.email) {
-    return (this.email) ? (this.email.match(EMAIL_REGEX)) : (email.match(EMAIL_REGEX))
+  // Methods
+  isValidEmail(email) {
+    console.log(`isValidEmail: ${checkEmail.test(email)}`)
+    return (email) ? checkEmail.test(email) : checkEmail.test(this.email)
   }
   isUniqueEmail(done) {
     if (this.unique) return true
