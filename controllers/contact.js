@@ -1,9 +1,11 @@
 'use strict'
 
 let
-    sg = require('sendgrid')(process.env.SENDGRID_API_KEY || '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')
-  , async = require('async')
-  , request = require('request')
+    path      = require('path')
+  , config    = require(path.resolve('./config/config'))
+  , sg        = require('sendgrid')(config.sendGrid.api_key)
+  , async     = require('async')
+  , request   = require('request')
 
 let listId = 847856
 
