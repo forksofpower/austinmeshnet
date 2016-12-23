@@ -15,9 +15,9 @@ router.post('/', (req, res, next) => {
     async.series([
       (cb) => {
         contact.isUniqueEmail((err) => {
-          // if (!err) {
-          //   res.send(data)
-          // }
+          if (!err) {
+            res.send(data)
+          }
           return cb(err)
         })
       },
@@ -27,10 +27,6 @@ router.post('/', (req, res, next) => {
       (cb) => {
         contact.addToMailingList((err) => { return cb(err) })
       },
-      (cb) => {
-        contact.bark()
-        cb()
-      }
     ], (err) => {
       if (err) return res.send(err)
       else return res.send({ email: req.body.email })

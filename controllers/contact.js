@@ -20,10 +20,6 @@ class Contact {
     }
   }
 
-  bark() {
-      console.log(this)
-  }
-
   // Methods
   isValidEmail(email) {
     return (email) ? checkEmail.test(email) : checkEmail.test(this.email)
@@ -73,21 +69,13 @@ class Contact {
   }
 
   addToMailingList(done) {
-    let request = sg.emptyRequest()
-    request.body = [this.id]
-    request.method = 'POST'
-    request.path = `/v3/contactdb/lists/${listId}/recipients`
-    sg.API(request, (err, response) => {
-      console.log(`Added to mailing list: ${response.body}`)
-      return done()
+    let request = sg.emptyRequest({
+        method: 'POST'
+      , path: `/v3/contactdb/lists/${listId}/recipients`
+      , body: [this.id]
     })
+    sg.API(request, (err, response) => { return done(err) })
   }
-}
-
-module.exports.appendToMailingList = (email, done) => {
-  // do something to the maiing list
-  console.log('Email has been appended')
-  done()
 }
 
 module.exports = Contact
