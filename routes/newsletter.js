@@ -3,26 +3,35 @@ let
     express = require('express')
   , router = express.Router()
   , async = require('async')
-  , emails = require('../controllers/emails.controller.js')
+  , Contact = require('../controllers/contact.js')
   ;
-
 
 router.post('/', (req, res, next) => {
   // console.log(req)
-  async.series([
-    (cb) => {
-      emails.isValidEmail(req.body.email, (err) => { return cb(err) })
-    },
-    (cb) => {
-      emails.isUniqueEmail(req.body.email, (err) => { return cb(err) })
-    },
-    (cb) => {
-      emails.appendMailingList(req.body.email, (err) => { return cb(err) })
-    },
-  ], (err) => {
-    if (err) return res.status(400).send(err)
-    else return res.send({ email: req.body.email })
-  })
+  let data = req.body
+  let contact = new Contact(data)
+
+  if (contact) {
+    async.series([
+      (cb) => {
+        contact.isUniqueEmail((err) => {
+          if (!err) {
+            res.send(data)
+          }
+          return cb(err)
+        })
+      },
+      (cb) => {
+        contact.createRecipient((err) => { return cb(err) })
+      },
+      (cb) => {
+        contact.addToMailingList((err) => { return cb(err) })
+      },
+    ], (err) => {
+      if (err) return res.send(err)
+      else return res.send({ email: req.body.email })
+    })
+  }
 })
 
 module.exports = router
