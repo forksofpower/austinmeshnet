@@ -5,8 +5,8 @@ let
   , path = require('path')
   , favicon = require('serve-favicon')
   , bodyParser = require('body-parser')
-  , index = require('../routes/index')
-  , newsletter = require('../routes/newsletter')
+  , core = require('../modules/core/routes/core.route')
+  , newsletter = require('../modules/newsletter/routes/newsletter.route')
   , app = express()
   ;
 
@@ -20,7 +20,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/', index)
+app.use('/', core)
 app.use('/newsletter', newsletter)
 
 // catch 404 and forward to error handler

@@ -1,13 +1,13 @@
 'use strict'
 let
-    express = require('express')
+    path = require('path')
+  , express = require('express')
   , router = express.Router()
   , async = require('async')
-  , Contact = require('../controllers/contact.js')
+  , Contact = require(path.resolve('modules/newsletter/controllers/contact.controller.js'))
   ;
 
 router.post('/', (req, res, next) => {
-  // console.log(req)
   let data = req.body
   let contact = new Contact(data)
 
@@ -15,9 +15,8 @@ router.post('/', (req, res, next) => {
     async.series([
       (cb) => {
         contact.isUniqueEmail((err) => {
-          if (!err) {
-            res.send(data)
-          }
+          // finish user request
+          if (!err) { res.send(data) }
           return cb(err)
         })
       },
@@ -28,8 +27,9 @@ router.post('/', (req, res, next) => {
         contact.addToMailingList((err) => { return cb(err) })
       },
     ], (err) => {
+      // deal with any errors here
       if (err) return res.send(err)
-      else return res.send({ email: req.body.email })
+      // else return res.send({ email: req.body.email })
     })
   }
 })
