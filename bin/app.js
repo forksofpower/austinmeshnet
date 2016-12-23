@@ -12,7 +12,7 @@ let
 
 
 // setup views
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'jade');
 
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -38,7 +38,7 @@ app.use((err, req, res, next) => {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('../views/error');
 });
 
 module.exports = app;

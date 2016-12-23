@@ -1,9 +1,11 @@
 'use strict'
 
 let
-    sg = require('sendgrid')(process.env.SENDGRID_API_KEY)
+    sg = require('sendgrid')(process.env.SENDGRID_API_KEY || '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')
   , async = require('async')
   , request = require('request')
+
+let listId = 847856
 
 const checkEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
@@ -19,14 +21,14 @@ class Contact {
   }
 
   bark() {
-    console.log(`${this.firstName} ${this.lastName} can be reached at ${this.email}`)
+      console.log(this)
   }
 
   // Methods
   isValidEmail(email) {
-    console.log(`isValidEmail: ${checkEmail.test(email)}`)
     return (email) ? checkEmail.test(email) : checkEmail.test(this.email)
   }
+
   isUniqueEmail(done) {
     if (this.unique) return true
     else {
@@ -35,6 +37,7 @@ class Contact {
         path: `/v3/contactdb/recipients/search?email=${this.email}`
       })
       sg.API(request, (err, response) => {
+        console.log(response.body)
         if (err) return done(err)
         else if (response.body.recipients.length > 0) return done({ message: 'Email already exists'})
         else {
@@ -47,29 +50,36 @@ class Contact {
   }
 
   createRecipient(done) {
-    let recipient = {
-        "first_name": this.firstName
-      , "last_name": this.lastName
-      , "email": this.email
-    }
+    let recipients = [{
+        first_name: this.firstName
+      , last_name: this.lastName
+      , email: this.email
+    }]
     let request = sg.emptyRequest({
       method: 'POST',
       path: '/v3/contactdb/recipients',
-      body: recipient
+      body: recipients
     })
     sg.API(request, (err, response) => {
+      console.log(response.body)
       if (err) return done(err)
       else {
-        this.id = response.body['persisted_recipients'][0]
+        console.log(response.body.persisted_recipients[0])
+        this.id = response.body.persisted_recipients[0]
+        // console.log(this.id)
         return done()
       }
     })
   }
 
   addToMailingList(done) {
-    let request = sg.emptyRequest({
-      method: 'POST',
-      path: '/v3/contactdb/recipients/'
+    let request = sg.emptyRequest()
+    request.body = [this.id]
+    request.method = 'POST'
+    request.path = `/v3/contactdb/lists/${listId}/recipients`
+    sg.API(request, (err, response) => {
+      console.log(`Added to mailing list: ${response.body}`)
+      return done()
     })
   }
 }

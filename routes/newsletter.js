@@ -6,21 +6,6 @@ let
   , Contact = require('../controllers/contact.js')
   ;
 
-try {
-  let person = new Contact({
-    firstName: 'Patrick',
-    lastName: 'Jones',
-    email: 'forksofpower@gmail.com'
-  })
-  person.bark()
-  person.createRecipient((err) => {
-    if (err) console.log(err)
-  })
-  // person.bark()
-} catch (err) {
-  console.log(`error: ${err}`)
-}
-
 router.post('/', (req, res, next) => {
   // console.log(req)
   let data = req.body
@@ -29,13 +14,25 @@ router.post('/', (req, res, next) => {
   if (contact) {
     async.series([
       (cb) => {
-        contacts.isUniqueEmail((err) => { return cb(err) })
+        contact.isUniqueEmail((err) => {
+          // if (!err) {
+          //   res.send(data)
+          // }
+          return cb(err)
+        })
       },
       (cb) => {
-        contacts.appendToMailingList((err) => { return cb(err) })
+        contact.createRecipient((err) => { return cb(err) })
       },
+      (cb) => {
+        contact.addToMailingList((err) => { return cb(err) })
+      },
+      (cb) => {
+        contact.bark()
+        cb()
+      }
     ], (err) => {
-      if (err) return res.status(400).send(err)
+      if (err) return res.send(err)
       else return res.send({ email: req.body.email })
     })
   }
