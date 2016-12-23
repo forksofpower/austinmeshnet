@@ -1,9 +1,11 @@
 'use strict'
 
 let
-    sg = require('sendgrid')(process.env.SENDGRID_API_KEY || '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')
-  , async = require('async')
-  , request = require('request')
+    path      = require('path')
+  , config    = require(path.resolve('./config/config'))
+  , sg        = require('sendgrid')(config.sendGrid.api_key)
+  , async     = require('async')
+  , request   = require('request')
 
 let listId = 847856
 
@@ -11,7 +13,6 @@ const checkEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 
 class Contact {
   constructor(data) {
-    // if (!firstName || !lastName || !email) return { message: 'All fields are required' }
     if (!this.isValidEmail(data.email)) return { message: 'Email is not valid'}
     else {
       this.firstName = data.firstName;
@@ -33,12 +34,10 @@ class Contact {
         path: `/v3/contactdb/recipients/search?email=${this.email}`
       })
       sg.API(request, (err, response) => {
-        console.log(response.body)
         if (err) return done(err)
         else if (response.body.recipients.length > 0) return done({ message: 'Email already exists'})
         else {
           this.unique = true
-          console.log('Email is unique!')
           return done()
         }
       })
@@ -57,12 +56,9 @@ class Contact {
       body: recipients
     })
     sg.API(request, (err, response) => {
-      console.log(response.body)
       if (err) return done(err)
       else {
-        console.log(response.body.persisted_recipients[0])
         this.id = response.body.persisted_recipients[0]
-        // console.log(this.id)
         return done()
       }
     })
